@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace kirancrooks.Sharp8
 {
-    static class Font
+	static class Font
 	{
 		public const long char0 = 0xF0909090F0;
 		public const long char1 = 0x2060202070;

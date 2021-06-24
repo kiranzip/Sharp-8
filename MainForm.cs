@@ -36,7 +36,7 @@ namespace kirancrooks.Sharp8
 			KeyUp += SetKeyUp;
 		}
 
-        readonly Dictionary<Keys, byte> keyMapping = new Dictionary<Keys, byte>
+		readonly Dictionary<Keys, byte> keyMapping = new Dictionary<Keys, byte>
 		{
 			{ Keys.D1, 0x1 },
 			{ Keys.D2, 0x2 },
@@ -58,18 +58,18 @@ namespace kirancrooks.Sharp8
 
 		private void LoadROM_Click(object sender, EventArgs e)
 		{
-            OpenFileDialog chooseROM = new OpenFileDialog
-            {
-                Filter = "CHIP-8 ROMs (*.ch8)|*.ch8|All files (*.*)|*.*",
-                InitialDirectory = @"C:\",
-                Title = "Please select a valid CHIP-8 ROM file."
-            };
+			OpenFileDialog chooseROM = new OpenFileDialog
+			{
+				Filter = "CHIP-8 ROMs (*.ch8)|*.ch8|All files (*.*)|*.*",
+				InitialDirectory = @"C:\",
+				Title = "Please select a valid CHIP-8 ROM file."
+			};
 
-            if (chooseROM.ShowDialog() == DialogResult.OK)
-            {
+			if (chooseROM.ShowDialog() == DialogResult.OK)
+			{
 				ROM = chooseROM.FileName;
 				Sharp8.LoadROM(File.ReadAllBytes(ROM));
-            }
+			}
 		}
 
 		private void Start_Click(object sender, EventArgs e)
@@ -77,12 +77,12 @@ namespace kirancrooks.Sharp8
 			if (isRendering == true)
 				return;
 			else
-            {
+			{
 				if (ROM == null)
 					MessageBox.Show("Please load a ROM.");
 				else
 					StartRendering();
-            }
+			}
 		}
 
 		void Draw(bool[,] renderBuffer)
@@ -163,5 +163,5 @@ namespace kirancrooks.Sharp8
 			Sharp8.DoTick60();
 			renderView.Refresh();
 		}
-    }
+	}
 }

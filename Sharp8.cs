@@ -9,31 +9,31 @@ namespace kirancrooks.Sharp8
 		// Define screen area [64x32]
 		const int sWidth = 64, sHeight = 32;
 
-        // Actions
+		// Actions
 		readonly Action<bool[,]> doDraw;
-        readonly Action<int> doBeep;
+		readonly Action<int> doBeep;
 
-        // Buffers
-        readonly bool[,] renderBuffer = new bool[sWidth, sHeight];
-        readonly bool[,] flushBuffer = new bool[sWidth, sHeight];
+		// Buffers
+		readonly bool[,] renderBuffer = new bool[sWidth, sHeight];
+		readonly bool[,] flushBuffer = new bool[sWidth, sHeight];
 		bool isPendingFlush = true;
 
-        // Registers
-        readonly byte[] V = new byte[16];
+		// Registers
+		readonly byte[] V = new byte[16];
 		byte DELAY, SP;
 		ushort I, PC = 0x200;
-        readonly HashSet<byte> KEYREG = new HashSet<byte>();
+		readonly HashSet<byte> KEYREG = new HashSet<byte>();
 
-        // Stack and emulated RAM
-        readonly ushort[] STACK = new ushort[16];
-        readonly byte[] MEM = new byte[0x1000];
+		// Stack and emulated RAM
+		readonly ushort[] STACK = new ushort[16];
+		readonly byte[] MEM = new byte[0x1000];
 
-        // OPCODE dictionaries
-        readonly Dictionary<byte, Action<Decode>> OPCODES;
-        readonly Dictionary<byte, Action<Decode>> OPCODES_MISC;
+		// OPCODE dictionaries
+		readonly Dictionary<byte, Action<Decode>> OPCODES;
+		readonly Dictionary<byte, Action<Decode>> OPCODES_MISC;
 
-        // Random number generator
-        readonly Random RNG = new Random();
+		// Random number generator
+		readonly Random RNG = new Random();
 
 		public Sharp8(Action<bool[,]> doDraw, Action<int> doBeep)
 		{
@@ -324,7 +324,7 @@ namespace kirancrooks.Sharp8
 		}
 
 		void SKNP_Vx(Decode op)
-        {
+		{
 			if 
 				(op.NN == 0xA1 && !KEYREG.Contains(V[op.Vx]))
 				PC += 2;
