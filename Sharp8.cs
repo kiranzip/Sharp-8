@@ -9,28 +9,28 @@ namespace kirancrooks.Sharp8
 		// Define screen area [64x32]
 		const int sWidth = 64, sHeight = 32;
 
-		// Actions
-		Action<bool[,]> doDraw;
-		Action<int> doBeep;
+        // Actions
+		readonly Action<bool[,]> doDraw;
+        readonly Action<int> doBeep;
 
-		// Buffers
-		bool[,] renderBuffer = new bool[sWidth, sHeight];
-		bool[,] flushBuffer = new bool[sWidth, sHeight];
+        // Buffers
+        readonly bool[,] renderBuffer = new bool[sWidth, sHeight];
+        readonly bool[,] flushBuffer = new bool[sWidth, sHeight];
 		bool isPendingFlush = true;
 
-		// Registers
-		byte[] V = new byte[16];
+        // Registers
+        readonly byte[] V = new byte[16];
 		byte DELAY, SP;
 		ushort I, PC = 0x200;
-		HashSet<byte> KEYREG = new HashSet<byte>();
+        readonly HashSet<byte> KEYREG = new HashSet<byte>();
 
-		// Stack and emulated RAM
-		ushort[] STACK = new ushort[16];
-		byte[] MEM = new byte[0x1000];
+        // Stack and emulated RAM
+        readonly ushort[] STACK = new ushort[16];
+        readonly byte[] MEM = new byte[0x1000];
 
-		// OPCODE dictionaries
-		Dictionary<byte, Action<Decode>> OPCODES;
-		Dictionary<byte, Action<Decode>> OPCODES_MISC;
+        // OPCODE dictionaries
+        readonly Dictionary<byte, Action<Decode>> OPCODES;
+        readonly Dictionary<byte, Action<Decode>> OPCODES_MISC;
 
         // Random number generator
         readonly Random RNG = new Random();

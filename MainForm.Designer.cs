@@ -56,7 +56,7 @@
             this.btnLoadROM.TabIndex = 1;
             this.btnLoadROM.Text = "Load ROM";
             this.btnLoadROM.UseVisualStyleBackColor = false;
-            this.btnLoadROM.Click += new System.EventHandler(this.btnLoadROM_Click);
+            this.btnLoadROM.Click += new System.EventHandler(this.LoadROM_Click);
             // 
             // btnStart
             // 
@@ -70,7 +70,7 @@
             this.btnStart.TabIndex = 2;
             this.btnStart.Text = "Start";
             this.btnStart.UseVisualStyleBackColor = false;
-            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
+            this.btnStart.Click += new System.EventHandler(this.Start_Click);
             // 
             // MainForm
             // 

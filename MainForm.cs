@@ -30,13 +30,13 @@ namespace kirancrooks.Sharp8
 			Screen = new Bitmap(64, 32);
 			renderView.Image = Screen;
 
-			Sharp8 = new Sharp8(Draw, doBeep);
+			Sharp8 = new Sharp8(Draw, DoBeep);
 			
 			KeyDown += SetKeyDown;
 			KeyUp += SetKeyUp;
 		}
 
-		Dictionary<Keys, byte> keyMapping = new Dictionary<Keys, byte>
+        readonly Dictionary<Keys, byte> keyMapping = new Dictionary<Keys, byte>
 		{
 			{ Keys.D1, 0x1 },
 			{ Keys.D2, 0x2 },
@@ -56,21 +56,23 @@ namespace kirancrooks.Sharp8
 			{ Keys.V, 0xF },
 		};
 
-		private void btnLoadROM_Click(object sender, EventArgs e)
+		private void LoadROM_Click(object sender, EventArgs e)
 		{
-			OpenFileDialog chooseROM = new OpenFileDialog();
-			chooseROM.Filter = "CHIP-8 ROMs (*.ch8)|*.ch8|All files (*.*)|*.*";
-			chooseROM.InitialDirectory = @"C:\";
-			chooseROM.Title = "Please select a valid CHIP-8 ROM file.";
+            OpenFileDialog chooseROM = new OpenFileDialog
+            {
+                Filter = "CHIP-8 ROMs (*.ch8)|*.ch8|All files (*.*)|*.*",
+                InitialDirectory = @"C:\",
+                Title = "Please select a valid CHIP-8 ROM file."
+            };
 
-			if (chooseROM.ShowDialog() == DialogResult.OK)
+            if (chooseROM.ShowDialog() == DialogResult.OK)
             {
 				ROM = chooseROM.FileName;
 				Sharp8.LoadROM(File.ReadAllBytes(ROM));
             }
 		}
 
-		private void btnStart_Click(object sender, EventArgs e)
+		private void Start_Click(object sender, EventArgs e)
 		{
 			if (isRendering == true)
 				return;
@@ -108,7 +110,7 @@ namespace kirancrooks.Sharp8
 			Screen.UnlockBits(bits);
 		}
 
-		void doBeep(int ms)
+		void DoBeep(int ms)
 		{
 			Console.Beep(500, ms);
 		}
