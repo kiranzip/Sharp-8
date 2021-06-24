@@ -19,7 +19,7 @@ namespace kirancrooks.Sharp8
 		readonly TimeSpan Elapsed1000 = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 1000);
 
 		string ROM;
-		bool Rendering = false;
+		bool isRendering = false;
 
 		TimeSpan lastTime;
 
@@ -32,7 +32,6 @@ namespace kirancrooks.Sharp8
 
 			Sharp8 = new Sharp8(Draw, doBeep);
 			
-
 			KeyDown += SetKeyDown;
 			KeyUp += SetKeyUp;
 		}
@@ -57,11 +56,6 @@ namespace kirancrooks.Sharp8
 			{ Keys.V, 0xF },
 		};
 
-		protected override void OnLoad(EventArgs e)
-		{
-			//StartRenderLoop();
-		}
-
 		private void btnLoadROM_Click(object sender, EventArgs e)
 		{
 			OpenFileDialog chooseROM = new OpenFileDialog();
@@ -78,7 +72,7 @@ namespace kirancrooks.Sharp8
 
 		private void btnStart_Click(object sender, EventArgs e)
 		{
-			if (Rendering == true)
+			if (isRendering == true)
 				return;
 			else
             {
@@ -101,9 +95,9 @@ namespace kirancrooks.Sharp8
 				{
 					for (var x = 0; x < Screen.Width; x++)
 					{
-						pointer[0] = renderBuffer[x, y] ? (byte)238 : (byte)52; //B
-						pointer[1] = renderBuffer[x, y] ? (byte)246 : (byte)47; //G
 						pointer[2] = renderBuffer[x, y] ? (byte)247 : (byte)42; //R
+						pointer[1] = renderBuffer[x, y] ? (byte)246 : (byte)47; //G
+						pointer[0] = renderBuffer[x, y] ? (byte)238 : (byte)52; //B
 						pointer[3] = 255; //A
 
 						pointer += 4;
@@ -133,7 +127,7 @@ namespace kirancrooks.Sharp8
 
 		void StartRendering()
 		{
-			Rendering = true;
+			isRendering = true;
 			Task.Run(RenderLoop);
 		}
 
@@ -159,12 +153,12 @@ namespace kirancrooks.Sharp8
 
 		void Tick()
 		{
-			Sharp8.doTick();
+			Sharp8.DoTick();
 		}
 
 		void Tick60()
 		{
-			Sharp8.doTick60();
+			Sharp8.DoTick60();
 			renderView.Refresh();
 		}
     }

@@ -32,8 +32,8 @@ namespace kirancrooks.Sharp8
 		Dictionary<byte, Action<Decode>> OPCODES;
 		Dictionary<byte, Action<Decode>> OPCODES_MISC;
 
-		// Random number generator
-		Random RNG = new Random();
+        // Random number generator
+        readonly Random RNG = new Random();
 
 		public Sharp8(Action<bool[,]> doDraw, Action<int> doBeep)
 		{
@@ -52,7 +52,7 @@ namespace kirancrooks.Sharp8
 				{ 0x5 , SE_Vx_Vy }, // Skip next instruction if Vx = Vy
 				{ 0x6 , LD_Vx }, // Set Vx = kk
 				{ 0x7 , ADD_Vx }, // Set Vx = Vx + kk
-				{ 0x8 , LOGIC },
+				{ 0x8 , LOGIC }, // 8xy0 to 8xyE
 				{ 0x9 , SNE_Vx_Vy }, // Skip next instruction if Vx != Vy
 				{ 0xA , LD_I }, // Set I = nnn
 				{ 0xB , JP_V0 }, // Jump to location nnn + V0
@@ -64,37 +64,37 @@ namespace kirancrooks.Sharp8
 			};
 			OPCODES_MISC = new Dictionary<byte, Action<Decode>>
 			{
-				{ 0x07 , LD_Vx_DT },
-				{ 0x0A , LD_Vx_K },
-				{ 0x15 , LD_DT_Vx },
-				{ 0x18 , LD_ST_Vx },
-				{ 0x1E , ADD_I_Vx },
-				{ 0x29 , LD_F_Vx },
-				{ 0x33 , LD_B_Vx },
-				{ 0x55 , LD_I_Vx },
-				{ 0x65 , LD_Vx_I },
+				{ 0x07 , LD_Vx_DT }, // Set Vx = delay timer value
+				{ 0x0A , LD_Vx_K }, // Wait for a key press, store the value of the key in Vx
+				{ 0x15 , LD_DT_Vx }, // Set delay timer = Vx
+				{ 0x18 , LD_ST_Vx }, // Set sound timer = Vx
+				{ 0x1E , ADD_I_Vx }, // Set I = I + Vx
+				{ 0x29 , LD_F_Vx }, // Set I = location of sprite for digit Vx
+				{ 0x33 , LD_B_Vx }, // Store BCD representation of Vx in memory locations I, I+1, and I+2
+				{ 0x55 , LD_I_Vx }, // Store registers V0 through Vx in memory starting at location I
+				{ 0x65 , LD_Vx_I }, // Read registers V0 through Vx from memory starting at location I
 			};
 		}
 
 		void DrawFont()
 		{
 			var offset = 0x0;
-			DrawFont(5 * offset++, Font.char0);
-			DrawFont(5 * offset++, Font.char1);
-			DrawFont(5 * offset++, Font.char2);
-			DrawFont(5 * offset++, Font.char3);
-			DrawFont(5 * offset++, Font.char4);
-			DrawFont(5 * offset++, Font.char5);
-			DrawFont(5 * offset++, Font.char6);
-			DrawFont(5 * offset++, Font.char7);
-			DrawFont(5 * offset++, Font.char8);
-			DrawFont(5 * offset++, Font.char9);
-			DrawFont(5 * offset++, Font.charA);
-			DrawFont(5 * offset++, Font.charB);
-			DrawFont(5 * offset++, Font.charC);
-			DrawFont(5 * offset++, Font.charD);
-			DrawFont(5 * offset++, Font.charE);
-			DrawFont(5 * offset++, Font.charF);
+			DrawFont(5 * offset++, Font.char0); // 0
+			DrawFont(5 * offset++, Font.char1); // 1
+			DrawFont(5 * offset++, Font.char2); // 2
+			DrawFont(5 * offset++, Font.char3); // 3
+			DrawFont(5 * offset++, Font.char4); // 4
+			DrawFont(5 * offset++, Font.char5); // 5
+			DrawFont(5 * offset++, Font.char6); // 6
+			DrawFont(5 * offset++, Font.char7); // 7
+			DrawFont(5 * offset++, Font.char8); // 8
+			DrawFont(5 * offset++, Font.char9); // 9
+			DrawFont(5 * offset++, Font.charA); // A
+			DrawFont(5 * offset++, Font.charB); // B
+			DrawFont(5 * offset++, Font.charC); // C
+			DrawFont(5 * offset++, Font.charD); // D
+			DrawFont(5 * offset++, Font.charE); // E
+			DrawFont(5 * offset++, Font.charF); // F
 		}
 
 		void DrawFont(int address, long fData)
@@ -111,24 +111,24 @@ namespace kirancrooks.Sharp8
 			Array.Copy(op, 0, MEM, 0x200, op.Length);
 		}
 
-		public void doTick()
+		public void DoTick()
 		{
-			var tOPCODE = (ushort)(MEM[PC++] << 8 | MEM[PC++]);
+			var tickop = (ushort)(MEM[PC++] << 8 | MEM[PC++]);
 
 			var op = new Decode()
 			{
-				OPCODE = tOPCODE,
-				NNN = (ushort)(tOPCODE & 0x0FFF),
-				NN = (byte)(tOPCODE & 0x00FF),
-				N = (byte)(tOPCODE & 0x000F),
-				X = (byte)((tOPCODE & 0x0F00) >> 8),
-				Y = (byte)((tOPCODE & 0x00F0) >> 4),
+				OPCODE = tickop,
+				NNN = (ushort)(tickop & 0x0FFF),
+				NN = (byte)(tickop & 0x00FF),
+				N = (byte)(tickop & 0x000F),
+				Vx = (byte)((tickop & 0x0F00) >> 8),
+				Vy = (byte)((tickop & 0x00F0) >> 4),
 			};
 
-			OPCODES[(byte)(tOPCODE >> 12)](op);
+			OPCODES[(byte)(tickop >> 12)](op);
 		}
 
-		public void doTick60()
+		public void DoTick60()
 		{
 			if (DELAY > 0)
 				DELAY--;
@@ -186,73 +186,73 @@ namespace kirancrooks.Sharp8
 
 		void SE_Vx(Decode op)
 		{
-			if (V[op.X] == op.NN)
+			if (V[op.Vx] == op.NN)
 				PC += 2;
 		}
 
 		void SNE_Vx(Decode op)
 		{
-			if (V[op.X] != op.NN)
+			if (V[op.Vx] != op.NN)
 				PC += 2;
 		}
 
 		void SE_Vx_Vy(Decode op)
 		{
-			if (V[op.X] == V[op.Y])
+			if (V[op.Vx] == V[op.Vy])
 				PC += 2;
 		}
 
 		void SNE_Vx_Vy(Decode op)
 		{
-			if (V[op.X] != V[op.Y])
+			if (V[op.Vx] != V[op.Vy])
 				PC += 2;
 		}
 
 		void LD_Vx(Decode op)
 		{
-			V[op.X] = op.NN;
+			V[op.Vx] = op.NN;
 		}
 
 		void ADD_Vx(Decode op)
 		{
-			V[op.X] += op.NN;
+			V[op.Vx] += op.NN;
 		}
 
 		void LOGIC(Decode op)
 		{
 			switch (op.N)
 			{
-				case 0x0:
-					V[op.X] = V[op.Y];
+				case 0x0: // Set Vx = Vy
+					V[op.Vx] = V[op.Vy];
 					break;
-				case 0x1:
-					V[op.X] |= V[op.Y];
+				case 0x1: // Set Vx = Vx OR Vy
+					V[op.Vx] |= V[op.Vy];
 					break;
-				case 0x2:
-					V[op.X] &= V[op.Y];
+				case 0x2: // Set Vx = Vx AND Vy
+					V[op.Vx] &= V[op.Vy];
 					break;
-				case 0x3:
-					V[op.X] ^= V[op.Y];
+				case 0x3: // Set Vx = Vx XOR Vy
+					V[op.Vx] ^= V[op.Vy];
 					break;
-				case 0x4:
-					V[0xF] = (byte)(V[op.X] + V[op.Y] > 0xFF ? 1 : 0);
-					V[op.X] += V[op.Y];
+				case 0x4: // Set Vx = Vx + Vy, set VF = carry
+					V[0xF] = (byte)(V[op.Vx] + V[op.Vy] > 0xFF ? 1 : 0);
+					V[op.Vx] += V[op.Vy];
 					break;
-				case 0x5:
-					V[0xF] = (byte)(V[op.X] > V[op.Y] ? 1 : 0);
-					V[op.X] -= V[op.Y];
+				case 0x5: // Set Vx = Vx - Vy, set VF = NOT borrow
+					V[0xF] = (byte)(V[op.Vx] > V[op.Vy] ? 1 : 0);
+					V[op.Vx] -= V[op.Vy];
 					break;
-				case 0x6:
-					V[0xF] = (byte)((V[op.X] & 0x1) != 0 ? 1 : 0);
-					V[op.X] /= 2;
+				case 0x6: // Set Vx = Vx SHR 1
+					V[0xF] = (byte)((V[op.Vx] & 0x1) != 0 ? 1 : 0);
+					V[op.Vx] /= 2;
 					break;
-				case 0x7:
-					V[0xF] = (byte)(V[op.Y] > V[op.X] ? 1 : 0);
-					V[op.Y] -= V[op.X];
+				case 0x7: // Set Vx = Vy - Vx, set VF = NOT borrow
+					V[0xF] = (byte)(V[op.Vy] > V[op.Vx] ? 1 : 0);
+					V[op.Vy] -= V[op.Vx];
 					break;
-				case 0xE:
-					V[0xF] = (byte)((V[op.X] & 0xF) != 0 ? 1 : 0);
-					V[op.X] *= 2;
+				case 0xE: // Set Vx = Vx SHL 1
+					V[0xF] = (byte)((V[op.Vx] & 0xF) != 0 ? 1 : 0);
+					V[op.Vx] *= 2;
 					break;
 			}
 		}
@@ -264,13 +264,13 @@ namespace kirancrooks.Sharp8
 
 		void RND_Vx(Decode op)
 		{
-			V[op.X] = (byte)(RNG.Next(0, 256) & op.NN);
+			V[op.Vx] = (byte)(RNG.Next(0, 256) & op.NN);
 		}
 
 		void DRW_Vx_Vy(Decode op)
 		{
-			var startX = V[op.X];
-			var startY = V[op.Y];
+			var startX = V[op.Vx];
+			var startY = V[op.Vy];
 
 			for (var x = 0; x < sWidth; x++)
 			{
@@ -319,66 +319,66 @@ namespace kirancrooks.Sharp8
 		void SKP_Vx(Decode op)
 		{
 			if
-				(op.NN == 0x9E && KEYREG.Contains(V[op.X]))
+				(op.NN == 0x9E && KEYREG.Contains(V[op.Vx]))
 				PC += 2;
 		}
 
 		void SKNP_Vx(Decode op)
         {
 			if 
-				(op.NN == 0xA1 && !KEYREG.Contains(V[op.X]))
+				(op.NN == 0xA1 && !KEYREG.Contains(V[op.Vx]))
 				PC += 2;
 		}
 
 		void LD_Vx_K(Decode op)
 		{
 			if (KEYREG.Count != 0)
-				V[op.X] = KEYREG.First();
+				V[op.Vx] = KEYREG.First();
 			else
 				PC -= 2;
 		}
 
 		void LD_Vx_DT(Decode op)
 		{
-			V[op.X] = DELAY;
+			V[op.Vx] = DELAY;
 		}
 
 		void LD_DT_Vx(Decode op)
 		{
-			DELAY = V[op.X];
+			DELAY = V[op.Vx];
 		}
 
 		void LD_ST_Vx(Decode op)
 		{
-			doBeep((int)(V[op.X] * (1000f / 60)));
+			doBeep((int)(V[op.Vx] * (1000f / 60)));
 		}
 
 		void ADD_I_Vx(Decode op)
 		{
-			I += V[op.X];
+			I += V[op.Vx];
 		}
 
 		void LD_F_Vx(Decode op)
 		{
-			I = (ushort)(V[op.X] * 5);
+			I = (ushort)(V[op.Vx] * 5);
 		}
 
 		void LD_B_Vx(Decode op)
 		{
-			MEM[I + 0] = (byte)((V[op.X] / 100) % 10);
-			MEM[I + 1] = (byte)((V[op.X] / 10) % 10);
-			MEM[I + 2] = (byte)(V[op.X] % 10);
+			MEM[I + 0] = (byte)((V[op.Vx] / 100) % 10);
+			MEM[I + 1] = (byte)((V[op.Vx] / 10) % 10);
+			MEM[I + 2] = (byte)(V[op.Vx] % 10);
 		}
 
 		void LD_I_Vx(Decode op)
 		{
-			for (var i = 0; i <= op.X; i++)
+			for (var i = 0; i <= op.Vx; i++)
 				MEM[I + i] = V[i];
 		}
 
 		void LD_Vx_I(Decode op)
 		{
-			for (var i = 0; i <= op.X; i++)
+			for (var i = 0; i <= op.Vx; i++)
 				V[i] = MEM[I + i];
 		}
 

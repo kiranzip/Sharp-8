@@ -27,11 +27,11 @@ namespace kirancrooks.Sharp8
 	{
 		public ushort OPCODE;
 		public ushort NNN;
-		public byte NN, X, Y, N;
+		public byte NN, Vx, Vy, N;
 
 		public override string ToString()
 		{
-			return $"{OPCODE:X4} (X: {X:X}, Y: {Y:X}, N: {N:X}, NN: {NN:X2}, NNN: {NNN:X3})";
+			return $"{OPCODE:X4} (X: {Vx:X}, Y: {Vy:X}, N: {N:X}, NN: {NN:X2}, NNN: {NNN:X3})";
 		}
 	}
 
