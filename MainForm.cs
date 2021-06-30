@@ -27,6 +27,10 @@ namespace kirancrooks.Sharp8
 		{
 			InitializeComponent();
 
+			this.AllowDrop = true;
+			this.DragEnter += new DragEventHandler(MainForm_DragEnter);
+			this.DragDrop += new DragEventHandler(MainForm_DragDrop);
+
 			Screen = new Bitmap(64, 32);
 			renderView.Image = Screen;
 
@@ -83,6 +87,28 @@ namespace kirancrooks.Sharp8
 				else
 					StartRendering();
 			}
+		}
+
+		void MainForm_DragEnter(object sender, DragEventArgs e)
+		{
+			tester.Visible = true;
+			if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+		}
+
+		void MainForm_DragLeave(object sender, EventArgs e)
+		{
+			tester.Visible = false;
+		}
+
+		void MainForm_DragDrop(object sender, DragEventArgs e)
+		{
+			string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+			foreach (string file in files)
+			{
+				ROM = file;
+				Sharp8.LoadROM(File.ReadAllBytes(ROM));
+			}
+			tester.Visible = false;
 		}
 
 		void Draw(bool[,] renderBuffer)
@@ -163,5 +189,5 @@ namespace kirancrooks.Sharp8
 			Sharp8.DoTick60();
 			renderView.Refresh();
 		}
-	}
+    }
 }
