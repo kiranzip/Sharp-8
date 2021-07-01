@@ -91,13 +91,13 @@ namespace kirancrooks.Sharp8
 
 		void MainForm_DragEnter(object sender, DragEventArgs e)
 		{
-			tester.Visible = true;
+			draggable.Visible = true;
 			if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
 		}
 
 		void MainForm_DragLeave(object sender, EventArgs e)
 		{
-			tester.Visible = false;
+			draggable.Visible = false;
 		}
 
 		void MainForm_DragDrop(object sender, DragEventArgs e)
@@ -108,7 +108,7 @@ namespace kirancrooks.Sharp8
 				ROM = file;
 				Sharp8.LoadROM(File.ReadAllBytes(ROM));
 			}
-			tester.Visible = false;
+			draggable.Visible = false;
 		}
 
 		void Draw(bool[,] renderBuffer)
