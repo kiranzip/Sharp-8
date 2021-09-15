@@ -28,12 +28,9 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.btnLoadROM = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
-            this.draggable = new System.Windows.Forms.PictureBox();
             this.renderView = new kirancrooks.Sharp8.NearestSampling();
-            ((System.ComponentModel.ISupportInitialize)(this.draggable)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.renderView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -42,7 +39,7 @@
             this.btnLoadROM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(47)))), ((int)(((byte)(52)))));
             this.btnLoadROM.FlatAppearance.BorderSize = 0;
             this.btnLoadROM.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLoadROM.Font = new System.Drawing.Font("IBM Plex Sans SemiBold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnLoadROM.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnLoadROM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(246)))), ((int)(((byte)(238)))));
             this.btnLoadROM.Location = new System.Drawing.Point(0, 320);
             this.btnLoadROM.Name = "btnLoadROM";
@@ -57,7 +54,7 @@
             this.btnStart.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(47)))), ((int)(((byte)(52)))));
             this.btnStart.FlatAppearance.BorderSize = 0;
             this.btnStart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnStart.Font = new System.Drawing.Font("IBM Plex Sans SemiBold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(246)))), ((int)(((byte)(238)))));
             this.btnStart.Location = new System.Drawing.Point(320, 320);
             this.btnStart.Name = "btnStart";
@@ -66,16 +63,6 @@
             this.btnStart.Text = "Start";
             this.btnStart.UseVisualStyleBackColor = false;
             this.btnStart.Click += new System.EventHandler(this.Start_Click);
-            // 
-            // draggable
-            // 
-            this.draggable.Image = ((System.Drawing.Image)(resources.GetObject("draggable.Image")));
-            this.draggable.Location = new System.Drawing.Point(0, 0);
-            this.draggable.Name = "draggable";
-            this.draggable.Size = new System.Drawing.Size(640, 320);
-            this.draggable.TabIndex = 3;
-            this.draggable.TabStop = false;
-            this.draggable.Visible = false;
             // 
             // renderView
             // 
@@ -93,7 +80,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(47)))), ((int)(((byte)(52)))));
             this.ClientSize = new System.Drawing.Size(640, 345);
-            this.Controls.Add(this.draggable);
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.btnLoadROM);
             this.Controls.Add(this.renderView);
@@ -105,8 +91,6 @@
             this.Text = "Sharp-8";
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
-            this.DragLeave += new System.EventHandler(this.MainForm_DragLeave);
-            ((System.ComponentModel.ISupportInitialize)(this.draggable)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.renderView)).EndInit();
             this.ResumeLayout(false);
 
@@ -117,7 +101,6 @@
 		private NearestSampling renderView;
 		private System.Windows.Forms.Button btnLoadROM;
 		private System.Windows.Forms.Button btnStart;
-        private System.Windows.Forms.PictureBox draggable;
     }
 }
 
